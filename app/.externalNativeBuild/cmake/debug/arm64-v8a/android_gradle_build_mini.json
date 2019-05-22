@@ -1,0 +1,26 @@
+{
+  "buildFiles": [
+    "/home/quyenpham/BuildDewarp/app/src/main/cpp/CMakeLists.txt"
+  ],
+  "cleanCommands": [
+    "/home/quyenpham/Android/Sdk/cmake/3.6.4111459/bin/cmake --build /home/quyenpham/BuildDewarp/app/.externalNativeBuild/cmake/debug/arm64-v8a --target clean"
+  ],
+  "libraries": {
+    "dewarp-Debug-arm64-v8a": {
+      "artifactName": "dewarp",
+      "buildCommand": "/home/quyenpham/Android/Sdk/cmake/3.6.4111459/bin/cmake --build /home/quyenpham/BuildDewarp/app/.externalNativeBuild/cmake/debug/arm64-v8a --target dewarp",
+      "abi": "arm64-v8a",
+      "output": "/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/arm64-v8a/libdewarp.so"
+    },
+    "lib_nlopt-Debug-arm64-v8a": {
+      "artifactName": "lib_nlopt",
+      "abi": "arm64-v8a",
+      "output": "/home/quyenpham/BuildDewarp/app/src/main/cpp/../jniLibs/arm64-v8a/libnlopt.so"
+    },
+    "lib_opencv-Debug-arm64-v8a": {
+      "artifactName": "lib_opencv",
+      "abi": "arm64-v8a",
+      "output": "/home/quyenpham/BuildDewarp/app/src/main/cpp/../jniLibs/arm64-v8a/libopencv_java3.so"
+    }
+  }
+}

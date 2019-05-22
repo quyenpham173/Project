@@ -1,0 +1,26 @@
+{
+  "buildFiles": [
+    "/home/quyenpham/BuildDewarp/app/src/main/cpp/CMakeLists.txt"
+  ],
+  "cleanCommands": [
+    "/home/quyenpham/Android/Sdk/cmake/3.6.4111459/bin/cmake --build /home/quyenpham/BuildDewarp/app/.externalNativeBuild/cmake/debug/armeabi-v7a --target clean"
+  ],
+  "libraries": {
+    "lib_opencv-Debug-armeabi-v7a": {
+      "artifactName": "lib_opencv",
+      "abi": "armeabi-v7a",
+      "output": "/home/quyenpham/BuildDewarp/app/src/main/cpp/../jniLibs/armeabi-v7a/libopencv_java3.so"
+    },
+    "dewarp-Debug-armeabi-v7a": {
+      "artifactName": "dewarp",
+      "buildCommand": "/home/quyenpham/Android/Sdk/cmake/3.6.4111459/bin/cmake --build /home/quyenpham/BuildDewarp/app/.externalNativeBuild/cmake/debug/armeabi-v7a --target dewarp",
+      "abi": "armeabi-v7a",
+      "output": "/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/armeabi-v7a/libdewarp.so"
+    },
+    "lib_nlopt-Debug-armeabi-v7a": {
+      "artifactName": "lib_nlopt",
+      "abi": "armeabi-v7a",
+      "output": "/home/quyenpham/BuildDewarp/app/src/main/cpp/../jniLibs/armeabi-v7a/libnlopt.so"
+    }
+  }
+}

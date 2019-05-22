@@ -1,0 +1,15 @@
+# ninja log v5
+0	1905	0	CMakeFiles/dewarp.dir/main.cpp.o	bf5769038dcbcd1d
+0	2606	0	CMakeFiles/dewarp.dir/C_preprocess.cpp.o	a9bafb7c5459dab2
+0	3624	0	CMakeFiles/dewarp.dir/page_dewarp.cpp.o	bfd9460a57749288
+3624	3681	0	/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/x86/libdewarp.so	49fc65c19e7d2442
+1	1669	0	CMakeFiles/dewarp.dir/main.cpp.o	bf5769038dcbcd1d
+1	1893	0	CMakeFiles/dewarp.dir/C_preprocess.cpp.o	a9bafb7c5459dab2
+1893	1975	0	/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/x86/libdewarp.so	49fc65c19e7d2442
+1	1389	0	CMakeFiles/dewarp.dir/C_preprocess.cpp.o	a9bafb7c5459dab2
+1389	1440	0	/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/x86/libdewarp.so	49fc65c19e7d2442
+1	1330	0	CMakeFiles/dewarp.dir/main.cpp.o	bf5769038dcbcd1d
+1	1659	0	CMakeFiles/dewarp.dir/C_preprocess.cpp.o	a9bafb7c5459dab2
+1659	1712	0	/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/x86/libdewarp.so	49fc65c19e7d2442
+1	1479	0	CMakeFiles/dewarp.dir/C_preprocess.cpp.o	a9bafb7c5459dab2
+1479	1517	0	/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/x86/libdewarp.so	49fc65c19e7d2442

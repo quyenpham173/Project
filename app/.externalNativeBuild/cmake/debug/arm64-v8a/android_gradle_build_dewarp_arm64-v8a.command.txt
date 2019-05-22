@@ -1,0 +1,8 @@
+Executable : /home/quyenpham/Android/Sdk/cmake/3.6.4111459/bin/cmake
+arguments : 
+--build
+/home/quyenpham/BuildDewarp/app/.externalNativeBuild/cmake/debug/arm64-v8a
+--target
+dewarp
+jvmArgs : 
+

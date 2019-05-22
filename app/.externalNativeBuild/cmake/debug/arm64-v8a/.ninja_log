@@ -1,0 +1,11 @@
+# ninja log v5
+1662	1722	0	/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/arm64-v8a/libdewarp.so	74c219992acb646b
+1	1217	0	CMakeFiles/dewarp.dir/main.cpp.o	c9606a5fd4908b28
+0	2257	0	CMakeFiles/dewarp.dir/page_dewarp.cpp.o	432ec76906b1b507
+0	1662	0	CMakeFiles/dewarp.dir/C_preprocess.cpp.o	392b5649b7404244
+1	2620	0	CMakeFiles/dewarp.dir/C_preprocess.cpp.o	392b5649b7404244
+2620	2707	0	/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/arm64-v8a/libdewarp.so	74c219992acb646b
+0	1705	0	CMakeFiles/dewarp.dir/C_preprocess.cpp.o	392b5649b7404244
+1705	1771	0	/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/arm64-v8a/libdewarp.so	74c219992acb646b
+1	1478	0	CMakeFiles/dewarp.dir/C_preprocess.cpp.o	392b5649b7404244
+1478	1548	0	/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/arm64-v8a/libdewarp.so	74c219992acb646b
