@@ -1238,7 +1238,8 @@ void Optimize::remap_image(string name, cv::Mat img, cv::Mat small, cv::Mat &thr
 	cv::remap(img_gray, remapped, image_x_out, image_y_out, cv::INTER_CUBIC, cv::BORDER_REPLICATE);
 	if (DEBUG_LEVEL)
 		cv::imwrite("result_remap.png", remapped);
-	cv::adaptiveThreshold(remapped, thresh, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY, ADAPTIVE_WINSZ, 25);
+	thresh = remapped.clone();
+	//cv::adaptiveThreshold(remapped, thresh, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY, ADAPTIVE_WINSZ, 25);
 //	string outfile = outfile_prefix + "_dewarp.png";
 //	cv::imwrite(outfile, thresh);
 }
