@@ -32,10 +32,8 @@ Mat claheGO(Mat src,int _step = 8)
     int height= src.rows;
     int width_block = width/block; //每个小格子的长和宽
     int height_block = height/block;
-    //存储各个直方图
     int tmp2[8*8][256] ={0};
     float C2[8*8][256] = {0.0};
-    //分块
     int total = width_block * height_block;
     for (int i=0;i<block;i++)
     {
@@ -302,7 +300,6 @@ void PreProcess::EdgeProcess(){
     float point_value;
     cv::Point2f top_left, top_right, bottom_left, bottom_right;
     double top, left, right, bottom, diagonal;
-
     if (numofEdge < 4) {
         printf("Nang anh len\n");
         action = Action::nang_len;
@@ -359,7 +356,7 @@ void PreProcess::EdgeProcess(){
             PreProcess::action = Action::nghieng_trai;
             return;
         }
-        if (area > 0.3 * image_area) {
+        if (area > 0.4 * image_area) {
             
             printf("chup anh\n");
             PreProcess::action = Action::chup_anh;
@@ -771,22 +768,8 @@ int main(int argc, char** argv ) {
     printf("%d",a);
 }
 
-/*int C_preprocess(cv::Mat src, cv::Mat &dst, Action &ac, std::vector <cv::Point2f> &point11)
-{
-    float width_threshold = 200;
-    float height_threshold = 300;
-    cv::Mat image_resize;
-    resize_to_screen1(src, &image_resize);
-    PreProcess image_process(image_resize, width_threshold, height_threshold);
-    image_process.process();
-    ac = image_process.action;
-    //ac = Action::nang_len;
-//    for (int i =0; i < line_point.size(); i++)
-//        point11.push_back(line_point[i]);
-//        //*point = line_point;
-}*/
 extern "C"{
-JNIEXPORT jlong JNICALL Java_com_example_builddewarp_CaptureImage_00024ImageSave_getvalue
+JNIEXPORT jlong JNICALL Java_com_example_builddewarp_CaptureImage_00024ImageSave_getLines
         (JNIEnv*, jobject, jlong inpAddr, jlong outAddr){
     Mat& image = *(Mat*) inpAddr;
     Mat& dst2 = *(Mat*) outAddr;
@@ -805,6 +788,22 @@ JNIEXPORT jlong JNICALL Java_com_example_builddewarp_CaptureImage_00024ImageSave
     dst2 = image_process.color_dst.clone();
     mat2 = &dst2;
     return (jlong) mat2;
+};
+JNIEXPORT jint JNICALL Java_com_example_builddewarp_CaptureImage_00024ImageSave_getAction
+        (JNIEnv*, jobject, jlong inpAddr){
+    Mat& image = *(Mat*) inpAddr;
+    cv::Mat dst;
+    cv::Mat image_resize;
+    Action ac;
+    float width_threshold = 200;
+    float height_threshold = 300;
+    std::vector<cv::Point2f> point;
+    resize_to_screen1(image, &image_resize);
+    PreProcess image_process(image_resize, width_threshold, height_threshold);
+    image_process.process();
+    ac = image_process.action;
+    __android_log_print(ANDROID_LOG_ERROR, "DEBUG_get_page_extent Action", "%d", ac);
+    return ac;
 };
 }
 

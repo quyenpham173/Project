@@ -22,12 +22,11 @@ set_target_properties(lib_nlopt PROPERTIES IMPORTED_LOCATION
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 #set(SOURCES native-lib.cpp)
 add_library( # Sets the name of the library.
-        dewarp
+        preprocess
         # Sets the library as a shared library.
         SHARED
         # Provides a relative path to your source file(s).
         ${CMAKE_CURRENT_SOURCE_DIR}/page_dewarp.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/C_preprocess.cpp
         )
 
@@ -49,7 +48,7 @@ add_library( # Sets the name of the library.
 # build script, prebuilt third-party libraries, or system libraries.
 
 target_link_libraries( # Specifies the target library.
-        dewarp
+        preprocess
         lib_opencv
         lib_nlopt
         # Links the target library to the log library

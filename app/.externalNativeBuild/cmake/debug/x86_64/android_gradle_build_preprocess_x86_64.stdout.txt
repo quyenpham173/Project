@@ -1,0 +1,2 @@
+[1/2] Building CXX object CMakeFiles/preprocess.dir/page_dewarp.cpp.o
+[2/2] Linking CXX shared library /home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/x86_64/libpreprocess.so

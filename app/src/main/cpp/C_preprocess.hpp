@@ -20,7 +20,7 @@ using namespace std;
 using namespace cv;
 
 enum Action {
-    chup_anh = 0,
+    chup_anh = 11,
     nghieng_len = 1,
     nghieng_xuong = 2,
     nghieng_trai = 3,
@@ -30,7 +30,7 @@ enum Action {
     len_tren = 7,
     xuong_duoi = 8,
     nang_len = 9,
-    ha_xuong = 10
+    ha_xuong = 10,
 };
 
 extern std::vector<cv::Point2f> line_point;
@@ -55,10 +55,6 @@ void run(const cv::Mat &img_input, cv::Mat &img_output);
 void enforceThreshold(cv::Mat image, cv::Mat *Threshold);
 
  void smoothImage(cv::Mat image, int kerSize, cv::Mat *dst, string option = "Gausian");
-
-
-//void help();
-//int C_preprocess(cv::Mat src, cv::Mat &dst, Action &ac, std::vector <cv::Point2f> &point);
 
 class PreProcess {
 public:

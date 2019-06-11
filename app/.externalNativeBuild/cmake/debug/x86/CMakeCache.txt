@@ -198,11 +198,11 @@ CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 //Value Computed by CMake
 dewarp_BINARY_DIR:STATIC=/home/quyenpham/BuildDewarp/app/.externalNativeBuild/cmake/debug/x86
 
-//Dependencies for the target
-dewarp_LIB_DEPENDS:STATIC=general;lib_opencv;general;lib_nlopt;general;android;general;log;
-
 //Value Computed by CMake
 dewarp_SOURCE_DIR:STATIC=/home/quyenpham/BuildDewarp/app/src/main/cpp
+
+//Dependencies for the target
+preprocess_LIB_DEPENDS:STATIC=general;lib_opencv;general;lib_nlopt;general;android;general;log;
 
 
 ########################

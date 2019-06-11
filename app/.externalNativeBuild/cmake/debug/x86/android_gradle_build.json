@@ -8,36 +8,6 @@
 	"cppFileExtensions" : [ "cpp" ],
 	"libraries" : 
 	{
-		"dewarp-Debug-x86" : 
-		{
-			"abi" : "x86",
-			"artifactName" : "dewarp",
-			"buildCommand" : "/home/quyenpham/Android/Sdk/cmake/3.6.4111459/bin/cmake --build /home/quyenpham/BuildDewarp/app/.externalNativeBuild/cmake/debug/x86 --target dewarp",
-			"buildType" : "debug",
-			"files" : 
-			[
-				
-				{
-					"flags" : "  --target=i686-none-linux-android21 --gcc-toolchain=/home/quyenpham/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64 --sysroot=/home/quyenpham/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/sysroot  -Ddewarp_EXPORTS -I/home/quyenpham/BuildDewarp/app/src/main/cpp/include -I/home/quyenpham/BuildDewarp/app/src/main/cpp/nlopt-2.6.1  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security -stdlib=libc++ -std=c++14 -fexceptions -frtti -O0 -fno-limit-debug-info  -fPIC    -c ",
-					"src" : "/home/quyenpham/BuildDewarp/app/src/main/cpp/page_dewarp.cpp",
-					"workingDirectory" : "/home/quyenpham/BuildDewarp/app/.externalNativeBuild/cmake/debug/x86"
-				},
-				
-				{
-					"flags" : "  --target=i686-none-linux-android21 --gcc-toolchain=/home/quyenpham/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64 --sysroot=/home/quyenpham/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/sysroot  -Ddewarp_EXPORTS -I/home/quyenpham/BuildDewarp/app/src/main/cpp/include -I/home/quyenpham/BuildDewarp/app/src/main/cpp/nlopt-2.6.1  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security -stdlib=libc++ -std=c++14 -fexceptions -frtti -O0 -fno-limit-debug-info  -fPIC    -c ",
-					"src" : "/home/quyenpham/BuildDewarp/app/src/main/cpp/main.cpp",
-					"workingDirectory" : "/home/quyenpham/BuildDewarp/app/.externalNativeBuild/cmake/debug/x86"
-				},
-				
-				{
-					"flags" : "  --target=i686-none-linux-android21 --gcc-toolchain=/home/quyenpham/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64 --sysroot=/home/quyenpham/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/sysroot  -Ddewarp_EXPORTS -I/home/quyenpham/BuildDewarp/app/src/main/cpp/include -I/home/quyenpham/BuildDewarp/app/src/main/cpp/nlopt-2.6.1  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security -stdlib=libc++ -std=c++14 -fexceptions -frtti -O0 -fno-limit-debug-info  -fPIC    -c ",
-					"src" : "/home/quyenpham/BuildDewarp/app/src/main/cpp/C_preprocess.cpp",
-					"workingDirectory" : "/home/quyenpham/BuildDewarp/app/.externalNativeBuild/cmake/debug/x86"
-				}
-			],
-			"output" : "/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/x86/libdewarp.so",
-			"toolchain" : "11119865892214877224"
-		},
 		"lib_nlopt-Debug-x86" : 
 		{
 			"abi" : "x86",
@@ -52,6 +22,30 @@
 			"artifactName" : "lib_opencv",
 			"buildType" : "debug",
 			"output" : "/home/quyenpham/BuildDewarp/app/src/main/cpp/../jniLibs/x86/libopencv_java3.so",
+			"toolchain" : "11119865892214877224"
+		},
+		"preprocess-Debug-x86" : 
+		{
+			"abi" : "x86",
+			"artifactName" : "preprocess",
+			"buildCommand" : "/home/quyenpham/Android/Sdk/cmake/3.6.4111459/bin/cmake --build /home/quyenpham/BuildDewarp/app/.externalNativeBuild/cmake/debug/x86 --target preprocess",
+			"buildType" : "debug",
+			"files" : 
+			[
+				
+				{
+					"flags" : "  --target=i686-none-linux-android21 --gcc-toolchain=/home/quyenpham/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64 --sysroot=/home/quyenpham/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/sysroot  -Dpreprocess_EXPORTS -I/home/quyenpham/BuildDewarp/app/src/main/cpp/include -I/home/quyenpham/BuildDewarp/app/src/main/cpp/nlopt-2.6.1  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -std=c++14 -fexceptions -frtti -O0 -fno-limit-debug-info  -fPIC    -c ",
+					"src" : "/home/quyenpham/BuildDewarp/app/src/main/cpp/page_dewarp.cpp",
+					"workingDirectory" : "/home/quyenpham/BuildDewarp/app/.externalNativeBuild/cmake/debug/x86"
+				},
+				
+				{
+					"flags" : "  --target=i686-none-linux-android21 --gcc-toolchain=/home/quyenpham/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64 --sysroot=/home/quyenpham/Android/Sdk/ndk-bundle/toolchains/llvm/prebuilt/linux-x86_64/sysroot  -Dpreprocess_EXPORTS -I/home/quyenpham/BuildDewarp/app/src/main/cpp/include -I/home/quyenpham/BuildDewarp/app/src/main/cpp/nlopt-2.6.1  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -mstackrealign -fno-addrsig -Wa,--noexecstack -Wformat -Werror=format-security  -std=c++14 -fexceptions -frtti -O0 -fno-limit-debug-info  -fPIC    -c ",
+					"src" : "/home/quyenpham/BuildDewarp/app/src/main/cpp/C_preprocess.cpp",
+					"workingDirectory" : "/home/quyenpham/BuildDewarp/app/.externalNativeBuild/cmake/debug/x86"
+				}
+			],
+			"output" : "/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/x86/libpreprocess.so",
 			"toolchain" : "11119865892214877224"
 		}
 	},

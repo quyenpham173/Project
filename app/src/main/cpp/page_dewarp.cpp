@@ -7,6 +7,8 @@
 #include <string.h>
 #include <jni.h>
 #include <android/log.h>
+#include <fstream>
+#include "C_preprocess.hpp"
 
 using namespace std;
 using namespace cv;
@@ -325,7 +327,7 @@ void get_page_extents(cv::Mat small, std::vector <cv::Point2f> line_point, cv::M
 	int max_x = width - PAGE_MARGIN_X;
 	int max_y = height - PAGE_MARGIN_Y;
 
-	__android_log_print(ANDROID_LOG_ERROR, "DEBUG_get_page_extent", "%d", line_point.size());
+//	__android_log_print(ANDROID_LOG_ERROR, "DEBUG_get_page_extent", "%d", line_point.size());
 
 	page_mask = cv::Mat::zeros(cv::Size(width, height), CV_8UC1);
     if (line_point.size() < 4) {
@@ -427,7 +429,7 @@ void get_contours_s(
 		// the height of the contours
 
 		double max, min;
-		// cv::minMaxLoc(reduced_tight_mask, &min, &max);
+		 cv::minMaxLoc(reduced_tight_mask, &min, &max);
 		// printf("min = %lf, max = %lf\n", min, max);
 		//exit(1);
 		// if the height of the heighest of the contour is greater that TEXT_MAX_THICKNESS
@@ -1084,7 +1086,7 @@ double be_like_target(const std::vector<double> &x, std::vector<double> &grad, v
 	{
 		min += pow(cv::norm(span_points_flat[i] - imagepoints[i]), 2);
 	}
-    __android_log_print(ANDROID_LOG_ERROR, "DEBUG_get_page_extent", "%lf", min);
+ //   __android_log_print(ANDROID_LOG_ERROR, "DEBUG_get_page_extent", "%lf", min);
 	if (DEBUG_LEVEL)
 		printf("loop = %d, min = %lf\n", loop, min);
 	//min_loop = min;
@@ -1102,7 +1104,7 @@ double Optimize::Minimize(std::vector<double> params)
 	opt.set_lower_bounds(lb);
 	opt.set_upper_bounds(lu);
 	opt.set_min_objective(be_like_target, NULL);
-	opt.set_xtol_rel(0.03);
+	opt.set_xtol_rel(0.02);
 	//opt.set_ftol_rel(1e-5);
 	std::vector<cv::Point2d> imagepoints;
 	opt.set_maxtime(1000);
@@ -1151,7 +1153,6 @@ double Optimize::get_page_dims(std::vector<double> params)
 	opt.optimize(x, opt_f);
 	for (unsigned int i = 0; i < x.size(); i++)
 	{
-		//printf("out_page_dims[%u] = %lf\n", i, x[i]);
 		out_page_dims.push_back(x[i]);
 	}
 	return 0;
@@ -1216,8 +1217,6 @@ void Optimize::remap_image(string name, cv::Mat img, cv::Mat small, cv::Mat &thr
 
 	cv::Mat image_x_coords(cv::Size(width_small, height_small), CV_32FC1);
 	cv::Mat image_y_coords(cv::Size(width_small, height_small), CV_32FC1);
-
-	// cout << "image_points size = " << image_points.size() << endl;
 	for (int j = 0; j < image_x_coords.rows; j++)
 	{
 		for (int i = 0; i < image_x_coords.cols; i++)
@@ -1238,101 +1237,10 @@ void Optimize::remap_image(string name, cv::Mat img, cv::Mat small, cv::Mat &thr
 	cv::remap(img_gray, remapped, image_x_out, image_y_out, cv::INTER_CUBIC, cv::BORDER_REPLICATE);
 	if (DEBUG_LEVEL)
 		cv::imwrite("result_remap.png", remapped);
-	cv::adaptiveThreshold(remapped, thresh, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY, ADAPTIVE_WINSZ, 25);
-//	string outfile = outfile_prefix + "_dewarp.png";
-//	cv::imwrite(outfile, thresh);
+//	cv::adaptiveThreshold(remapped, thresh, 255, cv::ADAPTIVE_THRESH_MEAN_C, cv::THRESH_BINARY, ADAPTIVE_WINSZ, 25);
+	thresh = remapped.clone();
 }
 
-#if 0
-
-int main(int argc, char **argv)
-{
-	cv::Mat image, small, page_mask;
-	std::vector<cv::Point> page_outline;
-	std::vector<ContourInfo> contours_out;
-	std::vector<std::vector<ContourInfo>> spans, spans2;
-	std::vector<std::vector<cv::Point2d>> span_points;
-
-	if (argc == 1)
-	{
-		return 0;
-	}
-
-	string filename(argv[1]);
-	if (filename.empty())
-	{
-		//help();
-		cout << "Nhap vao anh" << endl;
-		return -1;
-	}
-	image = cv::imread(filename);
-	if (image.empty())
-	{
-		//help();
-		cout << "can not open " << filename << endl;
-		return -1;
-	}
-	resize_to_screen(image, &small);
-
-	get_page_extents(small, &page_mask, &page_outline);
-
-	get_contours_s(filename, small, page_mask, 0, contours_out);
-
-	assemble_spans(filename, small, page_mask, contours_out, &spans);
-
-	if (spans.size() < 3)
-	{
-		//printf("detecting lines because only %lu text spans\n", spans.size());
-		get_contours_s(filename, small, page_mask, 1, contours_out);
-		assemble_spans(filename, small, page_mask, contours_out, &spans);
-		if (spans2.size() > spans.size())
-			spans = spans2;
-	}
-
-	if (spans.size() < 1)
-	{
-		//printf("skipping because only %lu continue\n",  spans.size());
-		return 0;
-	}
-
-	sample_spans(small.size(), spans, &span_points);
-
-	std::vector<std::vector<double>> xcoords;
-	std::vector<double> ycoords;
-
-	keypoints_from_samples(small, page_mask, page_outline, span_points, &corners, &xcoords, &ycoords);
-	double rough_dims[2];
-	std::vector<int> span_counts;
-	get_default_params(corners, ycoords, xcoords, rough_dims, &span_counts, &params);
-	span_points_flat.push_back(corners[0]);
-	for (unsigned int i = 0; i < span_points.size(); ++i)
-	{
-		span_points_flat.insert(span_points_flat.end(), span_points[i].begin(), span_points[i].end());
-	}
-	Optimize Object;
-	Object.span_counts = span_counts;
-	Object.make_keypoint_index(span_counts);
-
-	dims[0] = rough_dims[0];
-	dims[1] = rough_dims[1];
-	std::vector<cv::Point2d> imagepoints_debug;
-
-	project_keypoints(params, keypoint_index, &imagepoints_debug);
-	if (DEBUG_LEVEL)
-		draw_correspondences("before_optimize.png", small, span_points_flat, imagepoints_debug);
-	Object.Minimize(params);
-	imagepoints_debug.clear();
-	if (DEBUG_LEVEL)
-		project_keypoints(out_params, keypoint_index, &imagepoints_debug);
-	draw_correspondences("after.png", small, span_points_flat, imagepoints_debug);
-	Object.get_page_dims(out_params);
-	cv::Mat thresh;
-	Object.remap_image("output", image, small, thresh, std::vector<double>{1.264227, 1.914365}, out_params);
-	return 0;
-}
-#else
-
-	
 int page_dewarp(cv::Mat img_src, cv::Mat &img_dst, std::vector <cv::Point2f> line_point/*, string outfile_prefix*/)
 {
 	cv::Mat small, page_mask;
@@ -1396,93 +1304,36 @@ int page_dewarp(cv::Mat img_src, cv::Mat &img_dst, std::vector <cv::Point2f> lin
 		draw_correspondences("after.png", small, span_points_flat, imagepoints_debug);
 	}
 	Object.get_page_dims(out_params);
-	std::vector<double> dim_vector{dims[0], dims[1]};
+	std::vector<double> dim_vector{out_page_dims[0], out_page_dims[1]};
 	cout << "DEBUG_BEFORE_REMAP_IMAGE" << endl;
 	Object.remap_image("output", img_src, small, img_dst, dim_vector, out_params/*, outfile_prefix*/);
 	cout << "DEBUG_AFTER_REMAP_IMAGE" << endl;
+	span_points_flat.clear();
+	corners.clear();
+	keypoint_index[0].clear();
+	keypoint_index[1].clear();
+	keypoint.clear();
+	params.clear();
+	out_params.clear();
+	out_page_dims.clear();
 	return 0;
 }
 
-#endif
-
-/*extern "C" {
+extern "C" {
 
 JNIEXPORT jlong JNICALL Java_com_example_builddewarp_CaptureImage_00024ImageSave_dewarpImage
-        (JNIEnv*, jobject, jlong src){
-    cv::Mat* img_src = (cv::Mat*) src;
-    cv::Mat &img_dst = <#initializer#>;
-    cv::Mat image = *img_src;
-    cv::Mat small, page_mask;
-    Mat *mat = new Mat();
-    std::vector <cv::Point2f> line_point;
-    std::vector<cv::Point> page_outline;
-    std::vector<ContourInfo> contours_out;
-    std::vector<std::vector<ContourInfo>> spans, spans2;
-    std::vector<std::vector<cv::Point2d>> span_points;
-    string filename("abc");
-    string outfile_prefix;
-
-    resize_to_screen(image, &small);
-    get_page_extents(small, line_point, &page_mask, &page_outline);
-    get_contours_s(filename, small, page_mask, 0, contours_out);
-    assemble_spans(filename, small, page_mask, contours_out, &spans);
-
-    if (spans.size() < 3)
-    {
-        get_contours_s(filename, small, page_mask, 1, contours_out);
-        assemble_spans(filename, small, page_mask, contours_out, &spans);
-        if (spans2.size() > spans.size())
-            spans = spans2;
-    }
-
-    if (spans.size() < 1)
-    {
-        return 0;
-    }
-
-    sample_spans(small.size(), spans, &span_points);
-
-    std::vector<std::vector<double>> xcoords;
-    std::vector<double> ycoords;
-
-    keypoints_from_samples(small, page_mask, page_outline, span_points, &corners, &xcoords, &ycoords);
-    double rough_dims[2];
-    std::vector<int> span_counts;
-    get_default_params(corners, ycoords, xcoords, rough_dims, &span_counts, &params);
-    span_points_flat.push_back(corners[0]);
-    for (unsigned int i = 0; i < span_points.size(); ++i)
-    {
-        span_points_flat.insert(span_points_flat.end(), span_points[i].begin(), span_points[i].end());
-    }
-    Optimize Object;
-    Object.span_counts = span_counts;
-    Object.make_keypoint_index(span_counts);
-
-    dims[0] = rough_dims[0];
-    dims[1] = rough_dims[1];
-    std::vector<cv::Point2d> imagepoints_debug;
-
-    project_keypoints(params, keypoint_index, &imagepoints_debug);
-    if (DEBUG_LEVEL)
-        draw_correspondences("before_optimize.png", small, span_points_flat, imagepoints_debug);
-    Object.Minimize(params);
-    imagepoints_debug.clear();
-    if (DEBUG_LEVEL) {
-        project_keypoints(out_params, keypoint_index, &imagepoints_debug);
-        draw_correspondences("after.png", small, span_points_flat, imagepoints_debug);
-    }
-    Object.get_page_dims(out_params);
-    std::vector<double> dim_vector{dims[0], dims[1]};
-    cout << "DEBUG_BEFORE_REMAP_IMAGE" << endl;
-    Object.remap_image("output", image, small, img_dst, dim_vector, out_params, outfile_prefix);
-    mat = (Mat *) img_dst;
-    return (jlong)mat;
-*//*    cv::Mat* inMat = (cv::Mat*) inpAddr;
-    cv::Mat image = *inMat;
-    cv::Mat image_out;
-    imageresize(image, &image_out);
-    PreProcess *ptr_process = new PreProcess(image_out, 200, 300);
-    ptr_process->process();
-    return ptr_process->action;*//*
+		(JNIEnv*, jobject, jlong src, jlong dst){
+	Mat& img_src = *(Mat*) src;
+	Mat& img_dst = *(Mat*) dst;
+	ofstream outfile;
+	Mat *mat;
+	std::vector<cv::Point2f> point;
+	page_dewarp(img_src, img_dst, line_point);
+	line_point.clear();
+	mat = &img_dst;
+/*	__android_log_print(ANDROID_LOG_ERROR, "DEBUG_get_page_extent1", "%p", mat);
+	__android_log_print(ANDROID_LOG_ERROR, "DEBUG_get_page_extent2", "%d", mat->cols);
+	__android_log_print(ANDROID_LOG_ERROR, "DEBUG_get_page_extent3", "%d", mat->rows);*/
+	return (jlong) mat;
 };
-}*/
+}

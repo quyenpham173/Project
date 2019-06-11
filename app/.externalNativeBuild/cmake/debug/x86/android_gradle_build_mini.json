@@ -11,11 +11,11 @@
       "abi": "x86",
       "output": "/home/quyenpham/BuildDewarp/app/src/main/cpp/../jniLibs/x86/libnlopt.so"
     },
-    "dewarp-Debug-x86": {
-      "artifactName": "dewarp",
-      "buildCommand": "/home/quyenpham/Android/Sdk/cmake/3.6.4111459/bin/cmake --build /home/quyenpham/BuildDewarp/app/.externalNativeBuild/cmake/debug/x86 --target dewarp",
+    "preprocess-Debug-x86": {
+      "artifactName": "preprocess",
+      "buildCommand": "/home/quyenpham/Android/Sdk/cmake/3.6.4111459/bin/cmake --build /home/quyenpham/BuildDewarp/app/.externalNativeBuild/cmake/debug/x86 --target preprocess",
       "abi": "x86",
-      "output": "/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/x86/libdewarp.so"
+      "output": "/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/x86/libpreprocess.so"
     },
     "lib_opencv-Debug-x86": {
       "artifactName": "lib_opencv",

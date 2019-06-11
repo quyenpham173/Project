@@ -1,11 +1,17 @@
 # ninja log v5
-1662	1722	0	/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/arm64-v8a/libdewarp.so	74c219992acb646b
-1	1217	0	CMakeFiles/dewarp.dir/main.cpp.o	c9606a5fd4908b28
-0	2257	0	CMakeFiles/dewarp.dir/page_dewarp.cpp.o	432ec76906b1b507
-0	1662	0	CMakeFiles/dewarp.dir/C_preprocess.cpp.o	392b5649b7404244
-1	2620	0	CMakeFiles/dewarp.dir/C_preprocess.cpp.o	392b5649b7404244
-2620	2707	0	/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/arm64-v8a/libdewarp.so	74c219992acb646b
-0	1705	0	CMakeFiles/dewarp.dir/C_preprocess.cpp.o	392b5649b7404244
-1705	1771	0	/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/arm64-v8a/libdewarp.so	74c219992acb646b
-1	1478	0	CMakeFiles/dewarp.dir/C_preprocess.cpp.o	392b5649b7404244
-1478	1548	0	/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/arm64-v8a/libdewarp.so	74c219992acb646b
+0	1497	0	CMakeFiles/preprocess.dir/C_preprocess.cpp.o	badf2d066cfa276c
+0	14	0	build.ninja	5fec7f0505ea3188
+1	2818	0	CMakeFiles/preprocess.dir/page_dewarp.cpp.o	fb80bfb61c00a02a
+0	1163	0	CMakeFiles/preprocess.dir/main.cpp.o	ed73f2a8234296d4
+2819	2943	0	/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/arm64-v8a/libpreprocess.so	99559c5e2a5b49cd
+0	1370	0	CMakeFiles/preprocess.dir/C_preprocess.cpp.o	badf2d066cfa276c
+0	2230	0	CMakeFiles/preprocess.dir/page_dewarp.cpp.o	fb80bfb61c00a02a
+2230	2324	0	/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/arm64-v8a/libpreprocess.so	99559c5e2a5b49cd
+0	2478	0	CMakeFiles/preprocess.dir/page_dewarp.cpp.o	fb80bfb61c00a02a
+2478	2596	0	/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/arm64-v8a/libpreprocess.so	99559c5e2a5b49cd
+0	2265	0	CMakeFiles/preprocess.dir/page_dewarp.cpp.o	fb80bfb61c00a02a
+2266	2386	0	/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/arm64-v8a/libpreprocess.so	99559c5e2a5b49cd
+1	2359	0	CMakeFiles/preprocess.dir/page_dewarp.cpp.o	fb80bfb61c00a02a
+2359	2458	0	/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/arm64-v8a/libpreprocess.so	99559c5e2a5b49cd
+1	2463	0	CMakeFiles/preprocess.dir/page_dewarp.cpp.o	fb80bfb61c00a02a
+2463	2559	0	/home/quyenpham/BuildDewarp/app/build/intermediates/cmake/debug/obj/arm64-v8a/libpreprocess.so	99559c5e2a5b49cd

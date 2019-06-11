@@ -1,66 +1,17 @@
-/*package com.example.version1;
-
-import android.Manifest;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.graphics.ImageFormat;
-import android.graphics.SurfaceTexture;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCaptureSession;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraDevice;
-import android.hardware.camera2.CameraManager;
-import android.hardware.camera2.CaptureFailure;
-import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.CaptureResult;
-import android.hardware.camera2.TotalCaptureResult;
-import android.hardware.camera2.params.StreamConfigurationMap;
-import android.media.Image;
-import android.media.ImageReader;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.util.Size;
-import android.util.SparseIntArray;
-import android.view.Surface;
-import android.view.TextureView;
-import android.widget.Toast;
-
-import com.example.tesseract.R;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
-public class CaptureImage extends AppCompatActivity {
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_capture_image);
-    }
-}*/
 package com.example.builddewarp;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.ImageFormat;
+import android.graphics.Paint;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -78,6 +29,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.SystemClock;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -85,14 +38,12 @@ import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.Surface;
 import android.view.TextureView;
-import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
-
-import com.example.tesseract.R;
-
+import com.example.quyenpham.R;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -102,20 +53,48 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.example.quyenpham.R.id.take_picture;
 
 public class CaptureImage extends AppCompatActivity {
-    ImageView imageView;
-
+    public static final String ROOT_FOLDER = "Reading Assistance";
+    public static final String PHOTO_FOLDER = "Photo";
+    public static final String FILE_IMAGE = "image_original_";
+    public static final String FILE_DEWARP = "image_dewarp_";
+    public static final String FILE_LINES = "image_lines_";
+    TextToSpeech toSpeech;
     private static String TAG = "CaptureImage";
-
-    public static final String FOLDER_NAME = "Photo";
-    public static final String FILE_NAME = "image_";
-    public static final String ROOT_FOLDER = "Demo Camera2";
-
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
+    String chup_anh = "Đã chụp đúng, vui lòng chờ trong giây lát";
+    String nghieng_len = "nghiêng lên";
+    String nghieng_xuong = "nghiêng xuống ";
+    String nghieng_trai = "nghiêng trái ";
+    String nghieng_phai = "nghiêng phải ";
+    String sang_trai = "đưa sang trái";
+    String sang_phai = "đưa sang phải";
+    String len_tren = "tiến ra trước";
+    String xuong_duoi = "lùi ra sau";
+    String nang_len = "nâng lên";
+    String ha_xuong = "hạ xuống";
+    String wait = "Đang lấy nội dung trang sách";
+    int test;
+    RelativeLayout take;
+    TextView time;
+    private long startTime = 0L;
+    private Handler customHandler = new Handler();
+
+    long timeInMilliseconds = 0L;
+    long timeSwapBuff = 0L;
+    long updatedTime = 0L;
+    boolean stopTimer = false;
+    final Locale loc = new Locale("vi");
+    String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() +
+            File.separator + ROOT_FOLDER +
+            File.separator + PHOTO_FOLDER;
+    File dir = new File(dirPath);
 
     static {
         ORIENTATIONS.append(Surface.ROTATION_0, 90);
@@ -124,7 +103,6 @@ public class CaptureImage extends AppCompatActivity {
         ORIENTATIONS.append(Surface.ROTATION_270, 180);
     }
 
-    private static final int ACTIVITY_START_CAMERA_APP = 0;
     private static final int STATE_PREVIEW = 0;
     private static final int STATE_WAIT_LOCK = 1;
     private int state = STATE_PREVIEW;
@@ -145,6 +123,10 @@ public class CaptureImage extends AppCompatActivity {
 
         @Override
         public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+            if (textureView != null) {
+                closeCamera();
+                textureView = null;
+            }
             return false;
         }
 
@@ -228,101 +210,202 @@ public class CaptureImage extends AppCompatActivity {
                 @Override
                 public void onImageAvailable(ImageReader reader) {
                     Log.d(TAG, "onImageAvailable: ");
-                    /*ImageSave imageSave = new ImageSave(reader);
-                    imageSave.getImage();
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length,null);*/
-
                     backgroundHandler.post(new ImageSave(reader));
-
-                    //Change Activity here
                 }
             };
 
-    private static File imageFile;
+    public Bitmap toGrayscale(Bitmap bmpOriginal)
+    {
+        int width, height;
+        height = bmpOriginal.getHeight();
+        width = bmpOriginal.getWidth();
+
+        Bitmap bmpGrayscale = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bmpGrayscale);
+        Paint paint = new Paint();
+        ColorMatrix cm = new ColorMatrix();
+        cm.setSaturation(0);
+        ColorMatrixColorFilter f = new ColorMatrixColorFilter(cm);
+        paint.setColorFilter(f);
+        c.drawBitmap(bmpOriginal, 0, 0, paint);
+        return bmpGrayscale;
+    }
 
     public class ImageSave implements Runnable {
-
         private Image image;
-        private final ImageReader imageReader;
-
-/*        public Image getImage() {
-            return image;
-        }*/
-
+        private ImageReader imageReader;
+        ImageToText imageToText = new ImageToText(CaptureImage.this);
         private ImageSave(ImageReader reader) {
-            imageReader = reader;;
+            imageReader = reader;
             image = imageReader.acquireNextImage();
         }
 
         @Override
         public void run() {
             Log.d(TAG, "run begin");
+            long start = System.currentTimeMillis();
             ByteBuffer byteBuffer = image.getPlanes()[0].getBuffer();
             byte[] bytes = new byte[byteBuffer.remaining()];
-            //InputStream input=new ByteArrayInputStream(bytes);
             byteBuffer.get(bytes);
-            //int x = 0, y = 0;
+            image.close();
             Bitmap mbitmap = BitmapFactory.decodeByteArray(bytes,0,bytes.length);
-            //Bitmap mbitmap = Bitmap.createBitmap(imageView.getWidth(),imageView.getHeight(),Bitmap.Config.ARGB_8888);
             Mat mymat = new Mat();
             Utils.bitmapToMat(mbitmap, mymat);
-            Mat out_image = new Mat();
-            long test = getvalue(mymat.nativeObj, out_image.nativeObj);
-            Mat view_img = new Mat(test);
-            int w = view_img.width();
-            int h = view_img.height();
-            Bitmap.Config conf2 = Bitmap.Config.RGB_565;
-            Bitmap bmp2 = Bitmap.createBitmap(w, h, conf2);
-            Utils.matToBitmap(view_img, bmp2);
-            Log.d(TAG, "result: " + test);
-            if (test==0){
+
+            //Lấy hướng dẫn chụp
+            test = getAction(mymat.nativeObj);
+            Log.d(TAG, "Action result: " + test);
+            toSpeech = new TextToSpeech(CaptureImage.this, new TextToSpeech.OnInitListener() {
+                @Override
+                public void onInit(int status) {
+                    if(status != TextToSpeech.ERROR){
+                        toSpeech.setLanguage(loc);
+                        switch (test){
+                            case 11:
+                                toSpeech.speak(chup_anh, TextToSpeech.QUEUE_FLUSH,null, null);
+                                break;
+                            case 1:
+                                toSpeech.speak(nghieng_len, TextToSpeech.QUEUE_FLUSH,null, null);
+                                break;
+                            case 2:
+                                toSpeech.speak(nghieng_xuong, TextToSpeech.QUEUE_FLUSH,null, null);
+                                break;
+                            case 3:
+                                toSpeech.speak(nghieng_trai, TextToSpeech.QUEUE_FLUSH,null, null);
+                                break;
+                            case 4:
+                                toSpeech.speak(nghieng_phai, TextToSpeech.QUEUE_FLUSH,null, null);
+                                break;
+                            case 5:
+                                toSpeech.speak(sang_trai, TextToSpeech.QUEUE_FLUSH,null, null);
+                                break;
+                            case 6:
+                                toSpeech.speak(sang_phai, TextToSpeech.QUEUE_FLUSH,null, null);
+                                break;
+                            case 7:
+                                toSpeech.speak(len_tren, TextToSpeech.QUEUE_FLUSH,null, null);
+                                break;
+                            case 8:
+                                toSpeech.speak(xuong_duoi, TextToSpeech.QUEUE_FLUSH,null, null);
+                                break;
+                            case 9:
+                                toSpeech.speak(nang_len, TextToSpeech.QUEUE_FLUSH,null, null);
+                                break;
+                            case 10:
+                                toSpeech.speak(ha_xuong, TextToSpeech.QUEUE_FLUSH,null, null);
+                                break;
+                                default:
+                                    break;
+                        }
+                    }
+                }
+            });
+
+            toSpeech.stop();
+            long endDetect = System.currentTimeMillis();
+            Log.d("TimingDetect: ", (endDetect-start) + " ms");
+
+            if (test==11){
+                closeCamera();
+                image.close();
+
+                //Lấy ảnh Lines
+                Mat Line = new Mat();
+                long startLines = System.currentTimeMillis();
+                long longLines = getLines(mymat.nativeObj, Line.nativeObj);
+                Mat matLines = new Mat(longLines);
+                int w = matLines.width();
+                int h = matLines.height();
+                Bitmap.Config config = Bitmap.Config.RGB_565;
+                Bitmap bm = Bitmap.createBitmap(w, h, config);
+                Utils.matToBitmap(matLines, bm);
+                long endLines = System.currentTimeMillis();
+                Log.d("TimingLines: ",(endLines - startLines) + " ms");
+
+                //Lưu ảnh Dewarp và xử lý OCR
                 Mat mat_dst = new Mat();
+                long startDewarp = System.currentTimeMillis();
                 long img_long = dewarpImage(mymat.nativeObj, mat_dst.nativeObj);
                 Log.d(TAG, "Tung " + img_long);
+                toSpeech = new TextToSpeech(CaptureImage.this, new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int status) {
+                        if(status != TextToSpeech.ERROR){
+                            toSpeech.setLanguage(loc);
+                            toSpeech.speak(wait, TextToSpeech.QUEUE_FLUSH,null, null);
+                        }
+                    }
+                });
                 Mat img_dst = new Mat(img_long);
-                //Bitmap view_image = new  Bitmap();
                 int w1 = img_dst.width();
                 int h1 = img_dst.height();
-                Log.d(TAG, "Tung" + w);
-                Log.d(TAG, "Tung" + h);
-                Bitmap.Config conf = Bitmap.Config.RGB_565;
-                Bitmap bmp = Bitmap.createBitmap(w1, h1, conf); // this creates a MUTABLE bitmap
+                Bitmap.Config conf = Bitmap.Config.ARGB_8888;
+                Bitmap bmp = Bitmap.createBitmap(w1, h1, conf);
                 Utils.matToBitmap(img_dst, bmp);
-            }
-/*            Mat inMat = new Mat(mbitmap.getWidth(), mbitmap.getHeight(), CvType.CV_8UC3);
-            Mat outMat = new Mat();
-            Utils.bitmapToMat(mbitmap, inMat);
-            getvalue(effectType % 100, val, inputMat.getNativeObjAddr(), outputMat.getNativeObjAddr());
-            inputMat.release();
+                long endDewarp = System.currentTimeMillis();
+                Log.d("TimingDewarp: ", (endDewarp - startDewarp) + " ms");
+                imageToText.prepareTessData();
+                String result = imageToText.doInBackground(bmp);
+                Log.d("Get Message OCR", result);
+                Bundle bundle = new Bundle();
+                bundle.putString("RESULT", result);
+                Intent intent = new Intent(CaptureImage.this, ResultActivity.class);
+                intent.putExtras(bundle);
 
-            if (outputMat != null) {
-                Bitmap outbit = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
-                Utils.matToBitmap(outputMat, outbit);
-                outputMat.release();
-                return outbit;
+                //Lưu ảnh gốc
+                FileOutputStream fileOutputStream;
+                File imageFile = createImageFile();
+                try {
+                    fileOutputStream = new FileOutputStream(imageFile);
+                    fileOutputStream.write(bytes);
+                    Toast.makeText(CaptureImage.this, "save " + imageFile.getName(),
+                            Toast.LENGTH_SHORT).show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                SaveImageLines(bm);  //Lưu ảnh các cạnh
+                SaveImageDewarp(bmp);  // Lưu ảnh dewarp
+
+                startActivity(intent);
             }
-            return bitmap.copy(bitmap.getConfig(), true);*/
-            FileOutputStream fileOutputStream = null;
-            try {
-                fileOutputStream = new FileOutputStream(imageFile);
-                fileOutputStream.write(bytes);
-                Toast.makeText(CaptureImage.this, "save " + imageFile.getName(),
-                        Toast.LENGTH_SHORT).show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            image.close();
         }
         private native long dewarpImage(long mat, long mat2);
-        private native long getvalue(long mat3, long mat4);
+        private native int getAction(long inp);
+        private native long getLines(long m, long m2);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_capture_image);
-        textureView = (TextureView) findViewById(R.id.texture);
+        textureView = findViewById(R.id.texture);
+        take = findViewById(take_picture);
+/*        time = findViewById(R.id.timerValue);
+        startTime = SystemClock.uptimeMillis();
+        customHandler.postDelayed(updateTimerThread, 0);*/
     }
+/*    private Runnable updateTimerThread = new Runnable() {
+
+        public void run() {
+            timeInMilliseconds = SystemClock.uptimeMillis() - startTime;
+
+            updatedTime = timeSwapBuff + timeInMilliseconds;
+
+            int secs = (int) (updatedTime / 1000);
+            int mins = secs / 60;
+            secs = secs % 60;
+            int milliseconds = (int) (updatedTime % 1000);
+            @SuppressLint("DefaultLocale") String localtime = "" + mins + ":" + String.format("%02d", secs)
+                    + ":" + String.format("%03d", milliseconds);
+            time.setText(localtime);
+            if (mins == 5) {
+                stopTimer = true;
+            }
+            if (!stopTimer)
+                customHandler.postDelayed(this, 0);
+        }
+
+    };*/
 
     @Override
     protected void onResume() {
@@ -331,7 +414,6 @@ public class CaptureImage extends AppCompatActivity {
         if (textureView.isAvailable()) {
             setupCamera(textureView.getWidth(), textureView.getHeight());
             openCamera();
-
         } else {
             textureView.setSurfaceTextureListener(surfaceTextureListener);
         }
@@ -364,6 +446,7 @@ public class CaptureImage extends AppCompatActivity {
                 }
                 StreamConfigurationMap map = cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 
+                assert map != null;
                 Size imageSize = Collections.max(
                         Arrays.asList(map.getOutputSizes(ImageFormat.JPEG)),
                         new Comparator<Size>() {
@@ -416,8 +499,6 @@ public class CaptureImage extends AppCompatActivity {
         return mapSize[0];
     }
 
-    private Timer mTimer;
-    private TimerTask mTimerTask;
     private Handler mHandlerTakePicture;
 
     private void openCamera() {
@@ -437,21 +518,28 @@ public class CaptureImage extends AppCompatActivity {
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
-
-        mHandlerTakePicture = new Handler();
-        mTimer = new Timer();
-        mTimerTask = new TimerTask() {
+/*        take.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                takePhotoImage();
+            }
+        });*/
+            mHandlerTakePicture = new Handler();
+        Timer mTimer = new Timer();
+        TimerTask mTimerTask = new TimerTask() {
             @Override
             public void run() {
                 mHandlerTakePicture.post(new Runnable() {
                     @Override
                     public void run() {
-                        takePhotoImage();
+                        if (test != 11) {
+                            takePhotoImage();
+                        }
                     }
                 });
             }
         };
-        mTimer.schedule(mTimerTask, 3000, 5000);
+            mTimer.schedule(mTimerTask, 3000, 5000);
     }
 
     private void closeCamera() {
@@ -526,23 +614,22 @@ public class CaptureImage extends AppCompatActivity {
 
     private void takePhotoImage() {
         Log.d(TAG, "takePhotoImage: ");
-        imageFile = createImageFile();
         lockFocus();
     }
 
     private void lockFocus() {
-        try {
-            state = STATE_WAIT_LOCK;
-            previewCaptureRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
-                    CaptureRequest.CONTROL_AF_TRIGGER_START);
-            //setAutoFlash(previewCaptureRequestBuilder);
+        long startLock = System.currentTimeMillis();
+        state = STATE_WAIT_LOCK;
+        previewCaptureRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
+                CaptureRequest.CONTROL_AF_TRIGGER_START);
+        //setAutoFlash(previewCaptureRequestBuilder);
 
-            cameraCaptureSession.capture(previewCaptureRequestBuilder.build(),
+/*            cameraCaptureSession.capture(previewCaptureRequestBuilder.build(),
                     cameraSessionCaptureCallback,
-                    backgroundHandler);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
-        }
+                    backgroundHandler);*/
+        captureStillImage();
+        long endLock = System.currentTimeMillis();
+        Log.d("TimingLock: ",(endLock - startLock) + " ms");
     }
 
     private void unlockFocus() {
@@ -550,9 +637,7 @@ public class CaptureImage extends AppCompatActivity {
             state = STATE_PREVIEW;
             previewCaptureRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
                     CaptureRequest.CONTROL_AF_TRIGGER_CANCEL);
-
             //setAutoFlash(previewCaptureRequestBuilder);
-
             cameraCaptureSession.capture(previewCaptureRequestBuilder.build(),
                     cameraSessionCaptureCallback,
                     backgroundHandler);
@@ -569,9 +654,7 @@ public class CaptureImage extends AppCompatActivity {
 
             int rotation = getWindowManager().getDefaultDisplay().getRotation();
             captureStill.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
-            //
             //setAutoFlash(captureStill);
-
             CameraCaptureSession.CaptureCallback captureCallback = new
                     CameraCaptureSession.CaptureCallback() {
                         @Override
@@ -587,18 +670,43 @@ public class CaptureImage extends AppCompatActivity {
     }
 
     private File createImageFile() {
-        String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() +
-                File.separator + ROOT_FOLDER +
-                File.separator + FOLDER_NAME;
-        File dir = new File(dirPath);
         if (!dir.exists())
             dir.mkdirs();
-
-        String fileName = FILE_NAME + String.valueOf(System.currentTimeMillis()) + ".jpg";
+        String fileName = FILE_IMAGE + System.currentTimeMillis() + ".jpg";
         return new File(dir, fileName);
     }
 
+    private void SaveImageDewarp(Bitmap finalBitmap) {
+        String fileDewarp = FILE_DEWARP + System.currentTimeMillis() + ".jpg";
+        File file = new File (dir, fileDewarp);
+        if (file.exists ()) file.delete ();
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.flush();
+            out.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void SaveImageLines(Bitmap fbitmap) {
+        String fileDewarp = FILE_LINES + System.currentTimeMillis() + ".jpg";
+        File file = new File (dir, fileDewarp);
+        if (file.exists ()) file.delete ();
+        try {
+            FileOutputStream out = new FileOutputStream(file);
+            fbitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
+            out.flush();
+            out.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     static {
-        System.loadLibrary("dewarp");
+        System.loadLibrary("preprocess");
     }
 }

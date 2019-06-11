@@ -10,7 +10,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.builddewarp.MainActivity">
-
+<!--
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,5 +18,5 @@
         android:textAlignment="center"
         android:text="Welcome"
         android:textColor="#d7f708"
-        android:textSize="40dp"/>
+        android:textSize="40dp"/>-->
 </RelativeLayout>

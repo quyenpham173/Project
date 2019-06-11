@@ -207,6 +207,9 @@ dewarp_LIB_DEPENDS:STATIC=general;lib_opencv;general;lib_nlopt;general;android;g
 //Value Computed by CMake
 dewarp_SOURCE_DIR:STATIC=/home/quyenpham/BuildDewarp/app/src/main/cpp
 
+//Dependencies for the target
+preprocess_LIB_DEPENDS:STATIC=general;lib_opencv;general;lib_nlopt;general;android;general;log;
+
 
 ########################
 # INTERNAL cache entries
